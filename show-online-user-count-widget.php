@@ -1,11 +1,29 @@
 <?php
 
+/*
+	Question2Answer (c) Gideon Greenspan
+
+	https://www.question2answer.org/
+
+	This program is free software; you can redistribute it and/or
+	modify it under the terms of the GNU General Public License
+	as published by the Free Software Foundation; either version 2
+	of the License, or (at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	More about this license: https://www.question2answer.org/license.php
+*/
+
 class show_online_user_count_widget {
-	
+
 	function allow_template($template)
 	{
 		$allow=false;
-		
+
 		switch ($template)
 		{
 		case 'account':
@@ -17,7 +35,7 @@ class show_online_user_count_widget {
 		case 'favorites':
 		case 'feedback':
 		case 'hot':
-		case 'ip':	
+		case 'ip':
 		case 'login':
 		case 'message':
 		case 'qa':
@@ -34,25 +52,25 @@ class show_online_user_count_widget {
 				$allow=true;
 				break;
 		}
-		
+
 		return $allow;
 	}
-	
+
 	function allow_region($region)
 	{
 		$allow=false;
-		
+
 		switch ($region)
 		{
-			
+
 			case 'side':
 				$allow=true;
 				break;
 			case 'main':
-			case 'full':					
+			case 'full':
 				break;
 		}
-		
+
 		return $allow;
 	}
 	function inc_page_view_count()
@@ -66,7 +84,7 @@ class show_online_user_count_widget {
 		qa_opt('TODAY_VISITOR_COUNT',((int)qa_opt('TODAY_VISITOR_COUNT')+1));
 		qa_opt('TOTAL_VISITOR_COUNT',((int)qa_opt('TOTAL_VISITOR_COUNT')+1));
 	}
-	
+
 	function clean_offline_user()
 	{
 		$temp=(int)qa_opt('activity_time_out');
@@ -75,7 +93,7 @@ class show_online_user_count_widget {
 		$query='DELETE FROM ^online_user WHERE last_activity<"'.date('Y-m-d H:i:s',$timestamp).'"';
 		qa_db_query_sub($query);
 	}
-	
+
 	function activity_update()
 	{
 		$this->inc_page_view_count();
@@ -84,18 +102,18 @@ class show_online_user_count_widget {
 		$resultDb=qa_db_query_sub('SELECT id FROM ^online_user WHERE ip="'.$_SERVER['REMOTE_ADDR'].'"');
 		$activity_id=qa_db_read_one_assoc($resultDb,true);
 		if (isset($activity_id['id']))
-		{			
+		{
 			$query="UPDATE ^online_user SET user_id='".((isset($logged_userid))?$logged_userid:0)."',last_activity='".date('Y-m-d H:i:s')."' WHERE id='".$activity_id['id']."'";
-		    
+
 		}
 		else
 		{
 			$query="INSERT INTO ^online_user (user_id,ip,last_activity) VALUES ('".((isset($logged_userid))?$logged_userid:0)."','".$_SERVER['REMOTE_ADDR']."','".date('Y-m-d H:i:s')."')";
-			
+
 		}
-		
+
 		 qa_db_query_sub($query);
-		
+
 	}
 	function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
 	{
@@ -128,7 +146,7 @@ class show_online_user_count_widget {
 				$html='';
 				while (list($user_name)=mysqli_fetch_row($resultDb))
 				{
-				  $html.=qa_get_one_user_html($user_name, true, $relative_url_prefix).'-';	
+				  $html.=qa_get_one_user_html($user_name, true, $relative_url_prefix).'-';
 				}
 				$html= substr( $html,0,-1);
 				$themeobject->output('<div class="show-online-user-list">');
@@ -148,7 +166,7 @@ class show_online_user_count_widget {
 		 $themeobject->output('</div>');
 		 $themeobject->output('<div class="show-stats-list-yesterday">');
 		 $themeobject->output(str_replace('^',$yesterday_count,qa_lang_html('show_online_user_count_lang/yesterday_count')));
-		 $themeobject->output('</div>');	
+		 $themeobject->output('</div>');
 		 $themeobject->output('<div class="show-stats-list-total">');
 		 $themeobject->output(str_replace('^',$total_count,qa_lang_html('show_online_user_count_lang/total_count')));
 		 $themeobject->output('</div>');
@@ -162,7 +180,7 @@ class show_online_user_count_widget {
 			$themeobject->output('enable_page_level_ads: true');
 			$themeobject->output(' });');
 			$themeobject->output('</script>');
-		} 
+		}
 	*/
 		}
 }
