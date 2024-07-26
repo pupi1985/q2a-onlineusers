@@ -31,7 +31,7 @@ class show_online_user_count_page
             $queries[] =
                 'CREATE TABLE IF NOT EXISTS `^as_online_users` (' .
                 '   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,' .
-                '   `user_id` ' . qa_get_mysql_user_column_type() . ' NOT NULL,' .
+                '   `user_id` ' . qa_get_mysql_user_column_type() . ',' .
                 '   `ip` VARBINARY(16) NOT NULL,' .
                 '   `last_activity` DATETIME NOT NULL,' .
                 '   PRIMARY KEY (`id`),' .

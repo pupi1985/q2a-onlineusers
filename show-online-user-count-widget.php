@@ -107,10 +107,10 @@ class show_online_user_count_widget
         $resultDb = qa_db_query_sub('SELECT `id` FROM `^as_online_users` WHERE `ip` = UNHEX($)', $ipAddress);
         $activity_id = qa_db_read_one_assoc($resultDb, true);
         if (isset($activity_id['id'])) {
-            qa_db_query_sub('UPDATE `^as_online_users` SET `user_id` = $, `last_activity` = $ WHERE `id` = #', $logged_userid ?? '0', date('Y-m-d H:i:s'), $activity_id['id']);
+            qa_db_query_sub('UPDATE `^as_online_users` SET `user_id` = $, `last_activity` = $ WHERE `id` = #', $logged_userid, date('Y-m-d H:i:s'), $activity_id['id']);
 
         } else {
-            qa_db_query_sub('INSERT INTO `^as_online_users` (`user_id`, `ip`, `last_activity`) VALUES ($, UNHEX($), $)', $logged_userid ?? '0', $ipAddress, date('Y-m-d H:i:s'));
+            qa_db_query_sub('INSERT INTO `^as_online_users` (`user_id`, `ip`, `last_activity`) VALUES ($, UNHEX($), $)', $logged_userid, $ipAddress, date('Y-m-d H:i:s'));
         }
     }
 
@@ -120,10 +120,10 @@ class show_online_user_count_widget
 
         $this->clean_offline_user();
         $this->activity_update();
-        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` != "0"';
+        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` IS NOT NULL';
         $resultDb = qa_db_query_sub($query);
         $online_member_count = qa_db_read_one_assoc($resultDb, true);
-        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` = "0"';
+        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` IS NULL';
         $resultDb = qa_db_query_sub($query);
         $online_guest_count = qa_db_read_one_assoc($resultDb, true);
         $total_onilne_html = '<span class="show-online-user-count-data">' . ($online_member_count['COUNT(*)'] + $online_guest_count['COUNT(*)']) . '</span>';
@@ -140,7 +140,7 @@ class show_online_user_count_widget
         $themeobject->output($tempStr);
         $themeobject->output('</div>');
         if (qa_opt('show_online_user_list')) {
-            $query = "SELECT ^users.handle FROM ^users,`^as_online_users` WHERE ^users.userid=`^as_online_users`.user_id AND `^as_online_users`.user_id>0";
+            $query = 'SELECT `u`.`handle` FROM `^users` `u`, `^as_online_users` `ou` WHERE `u`.`userid` = `ou`.`user_id`';
             $resultDb = qa_db_query_sub($query);
             if (mysqli_num_rows($resultDb) > 0) {
                 $html = '';
