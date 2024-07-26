@@ -20,20 +20,26 @@
 
 class show_online_user_count_page
 {
-
     function init_queries($tableslc)
     {
-        $tablename = qa_db_add_table_prefix('online_user');
-        if (!in_array($tablename, $tableslc)) {
+        require_once QA_INCLUDE_DIR . 'app/users.php';
+        require_once QA_INCLUDE_DIR . 'db/maxima.php';
 
-            return "CREATE TABLE IF NOT EXISTS `" . $tablename . "` (
-							`id` int(11) NOT NULL AUTO_INCREMENT,
-							`user_id` int(1) NOT NULL,
-							`ip` varchar(20) COLLATE utf8_persian_ci NOT NULL,
-							`last_activity` datetime NOT NULL,
-							PRIMARY KEY (`id`)
-							) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;";
+        $queries = [];
+
+        if (!in_array(qa_db_add_table_prefix('as_online_users'), $tableslc)) {
+            $queries[] =
+                'CREATE TABLE IF NOT EXISTS `^as_online_users` (' .
+                '   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,' .
+                '   `user_id` ' . qa_get_mysql_user_column_type() . ' NOT NULL,' .
+                '   `ip` VARBINARY(16) NOT NULL,' .
+                '   `last_activity` DATETIME NOT NULL,' .
+                '   PRIMARY KEY (`id`),' .
+                '   CONSTRAINT `^as_online_users_fk1` FOREIGN KEY (`user_id`) REFERENCES `^users` (`userid`) ON DELETE CASCADE' .
+                ') ENGINE = InnoDB';
         }
+
+        return $queries;
     }
 
     function admin_form()

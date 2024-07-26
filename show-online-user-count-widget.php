@@ -20,6 +20,12 @@
 
 class show_online_user_count_widget
 {
+    private $urltoroot;
+
+    public function load_module($directory, $urltoroot)
+    {
+        $this->urltoroot = $urltoroot;
+    }
 
     function allow_template($template)
     {
@@ -87,9 +93,9 @@ class show_online_user_count_widget
     function clean_offline_user()
     {
         $temp = (int)qa_opt('activity_time_out');
-        $activity_time_out = (($temp > 0) ? $temp : 5) * 60;
+        $activity_time_out = ($temp > 0 ? $temp : 5) * 60;
         $timestamp = strtotime("now") - $activity_time_out;
-        $query = 'DELETE FROM ^online_user WHERE last_activity<"' . date('Y-m-d H:i:s', $timestamp) . '"';
+        $query = 'DELETE FROM `^as_online_users` WHERE last_activity<"' . date('Y-m-d H:i:s', $timestamp) . '"';
         qa_db_query_sub($query);
     }
 
@@ -97,18 +103,15 @@ class show_online_user_count_widget
     {
         $this->inc_page_view_count();
         $logged_userid = qa_get_logged_in_userid();
-        $resultDb = qa_db_query_sub('SELECT id FROM ^online_user WHERE ip="' . $_SERVER['REMOTE_ADDR'] . '"');
+        $ipAddress = bin2hex(@inet_pton(qa_remote_ip_address()));
+        $resultDb = qa_db_query_sub('SELECT `id` FROM `^as_online_users` WHERE `ip` = UNHEX($)', $ipAddress);
         $activity_id = qa_db_read_one_assoc($resultDb, true);
         if (isset($activity_id['id'])) {
-            $query = "UPDATE ^online_user SET user_id='" . ((isset($logged_userid)) ? $logged_userid : 0) . "',last_activity='" . date('Y-m-d H:i:s') . "' WHERE id='" . $activity_id['id'] . "'";
+            qa_db_query_sub('UPDATE `^as_online_users` SET `user_id` = $, `last_activity` = $ WHERE `id` = #', $logged_userid ?? '0', date('Y-m-d H:i:s'), $activity_id['id']);
 
         } else {
-            $query = "INSERT INTO ^online_user (user_id,ip,last_activity) VALUES ('" . ((isset($logged_userid)) ? $logged_userid : 0) . "','" . $_SERVER['REMOTE_ADDR'] . "','" . date('Y-m-d H:i:s') . "')";
-
+            qa_db_query_sub('INSERT INTO `^as_online_users` (`user_id`, `ip`, `last_activity`) VALUES ($, UNHEX($), $)', $logged_userid ?? '0', $ipAddress, date('Y-m-d H:i:s'));
         }
-
-        qa_db_query_sub($query);
-
     }
 
     function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
@@ -117,10 +120,10 @@ class show_online_user_count_widget
 
         $this->clean_offline_user();
         $this->activity_update();
-        $query = 'SELECT COUNT(*) FROM ^online_user WHERE user_id>"0"';
+        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` != "0"';
         $resultDb = qa_db_query_sub($query);
         $online_member_count = qa_db_read_one_assoc($resultDb, true);
-        $query = 'SELECT COUNT(*) FROM ^online_user WHERE user_id="0"';
+        $query = 'SELECT COUNT(*) FROM `^as_online_users` WHERE `user_id` = "0"';
         $resultDb = qa_db_query_sub($query);
         $online_guest_count = qa_db_read_one_assoc($resultDb, true);
         $total_onilne_html = '<span class="show-online-user-count-data">' . ($online_member_count['COUNT(*)'] + $online_guest_count['COUNT(*)']) . '</span>';
@@ -129,15 +132,15 @@ class show_online_user_count_widget
         $tempStr = str_replace('^1', $online_member_html, qa_lang_html('show_online_user_count_lang/online_guest_member'));
         $tempStr = str_replace('^2', $online_quest_html, $tempStr);
 
-        $themeobject->output('<link rel="stylesheet" type="text/css" href="' . qa_opt('site_url') . 'qa-plugin/q2a-onlineusers/css/style.css">');
+        $themeobject->output(sprintf('<link rel="stylesheet" href="%scss/style.css">', $this->urltoroot));
         $themeobject->output('<div class="show-online-user-count-total">');
         $themeobject->output(str_replace('^', $total_onilne_html, qa_lang_html('show_online_user_count_lang/total_online_users')));
         $themeobject->output('</div>');
         $themeobject->output('<div class="show-online-user-count-info">');
         $themeobject->output($tempStr);
         $themeobject->output('</div>');
-        if (qa_opt('show_online_user_list') > 0) {
-            $query = "SELECT ^users.handle FROM ^users,^online_user WHERE ^users.userid=^online_user.user_id AND ^online_user.user_id>0";
+        if (qa_opt('show_online_user_list')) {
+            $query = "SELECT ^users.handle FROM ^users,`^as_online_users` WHERE ^users.userid=`^as_online_users`.user_id AND `^as_online_users`.user_id>0";
             $resultDb = qa_db_query_sub($query);
             if (mysqli_num_rows($resultDb) > 0) {
                 $html = '';
@@ -151,7 +154,7 @@ class show_online_user_count_widget
                 $themeobject->output('</div>');
             }
         }
-        if (qa_opt('show_site_visitor_count') > 0) {
+        if (qa_opt('show_site_visitor_count')) {
             $today_count = '<span class="show-stats-list-data">' . ((int)qa_opt('TODAY_VISITOR_COUNT')) . '</span>';
             $yesterday_count = '<span class="show-stats-list-data">' . ((int)qa_opt('YESTERDAY_VISITOR_COUNT')) . '</span>';
             $total_count = '<span class="show-stats-list-data">' . ((int)qa_opt('TOTAL_VISITOR_COUNT')) . '</span>';
