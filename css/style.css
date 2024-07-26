@@ -1,38 +1,42 @@
 div.show-online-user-count-total {
-	font-size: 16px;
-	text-align: center;
-	border-bottom: 1px #C0C0C0 solid;
-	margin: 5px;
-	height: 50px;
-	background-image: url(images/users-icon.png);
-	background-repeat: no-repeat;
+    font-size: 16px;
+    text-align: center;
+    border-bottom: 1px #c0c0c0 solid;
+    margin: 5px;
+    height: 50px;
+    background-image: url(images/users-icon.png);
+    background-repeat: no-repeat;
     background-position: right;
-	padding: 5px 5px 5px 5px;
+    padding: 5px 5px 5px 5px;
 }
 
-.show-online-user-count-data,.show-stats-list-data {
-	font-weight: bold;
-	color: #F00;
+.show-online-user-count-data, .show-stats-list-data {
+    font-weight: bold;
+    color: #f00;
 }
+
 .show-online-user-count-info {
-	text-align: center;
-	font-size: 13px;
+    text-align: center;
+    font-size: 13px;
 }
+
 div.show-online-user-list {
-	margin: 10px;	
-	background-color: #EDF7FF;
-	padding: 5px;
+    margin: 10px;
+    background-color: #edf7ff;
+    padding: 5px;
 }
+
 .show-online-user-list_title {
-	text-align: center;
-	font-size: 13px;
-	font-weight: bold;
-	margin: 3px;
-	background: #DFEDFF;
+    text-align: center;
+    font-size: 13px;
+    font-weight: bold;
+    margin: 3px;
+    background: #dfedff;
 }
+
 div.show-stats-list {
-	margin: 10px;	
-	background-color: #FFFCB2;
-	padding: 10px 30px 10px 30px;
-	font-size:13px;
+    margin: 10px;
+    background-color: #fffcb2;
+    padding: 10px 30px 10px 30px;
+    font-size: 13px;
 }

@@ -6,15 +6,17 @@ This is a plugin for [Question2Answer](http://www.question2answer.org/) that sho
 
 Installation
 ------------
+
 - Install [Question2Answer](http://www.question2answer.org/) if you haven't already.
 - Download this plugin directly and upload it inside the `qa-plugin` folder of your Q2A installation.
 - Extract the files.
 - Optional: Change language strings in file ```show-online-user-count-lang.php```
 - Navigate to your site, go to **Admin -> Plugins**. Check if the plugin ```Online User Count``` is listed.
 - Press **Settings** then place the options you want to activate the plugin
-  
+
 Changelog
 ------------
+
 - Working With Mysqli
 - Add Visit Count On Widget
 - Add Option For Active Or Deactive Visit Count On Widget
@@ -40,7 +42,8 @@ I ([pupi1985](https://www.question2answer.org/qa/user/pupi1985)) am just extendi
 
 Copyright
 ---------
-All code herein is [OpenSource](http://www.gnu.org/licenses/gpl.html). Feel free to build upon it and share with the world.
+All code herein is [OpenSource](http://www.gnu.org/licenses/gpl.html). Feel free to build upon it and share with the
+world.
 
 About q2a
 ---------
