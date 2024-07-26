@@ -1,12 +1,5 @@
 # Q2A - Online User Count
 
-- Plugin Name: Online User Count
-- Plugin Version: 2.0
-- Plugin Date: 2013-12-16
-- Plugin Author: Ali Sayahiyan
-- Plugin License: GPLv2
-- Plugin Minimum [Question2Answer](http://www.question2answer.org/) Version: 1.6
-
 Plugin Description
 ------------
 This is a plugin for [Question2Answer](http://www.question2answer.org/) that show Online User And Visit Count Widget
@@ -39,6 +32,11 @@ If you want to Change css , go to `pluginfolder/css/style.css`
 <b>preview of options:</b>
 </p>
 <img src="http://196.221.149.40/img/OnlineUserCount.jpg">
+
+## Author
+
+The original author is Ali Sayahiyan.
+I ([pupi1985](https://www.question2answer.org/qa/user/pupi1985)) am just extending the original plugin.
 
 Copyright
 ---------
