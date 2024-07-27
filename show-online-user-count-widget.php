@@ -104,14 +104,50 @@ class show_online_user_count_widget
         $this->inc_page_view_count();
         $logged_userid = qa_get_logged_in_userid();
         $ipAddress = bin2hex(@inet_pton(qa_remote_ip_address()));
-        $resultDb = qa_db_query_sub('SELECT `id` FROM `^as_online_users` WHERE `ip` = UNHEX($)', $ipAddress);
-        $activity_id = qa_db_read_one_assoc($resultDb, true);
-        if (isset($activity_id['id'])) {
-            qa_db_query_sub('UPDATE `^as_online_users` SET `user_id` = $, `last_activity` = $ WHERE `id` = #', $logged_userid, date('Y-m-d H:i:s'), $activity_id['id']);
+        $currentDate = date('Y-m-d H:i:s');
 
+        $activity_id = $this->getActivityId($logged_userid, $ipAddress);
+        $this->insertOrUpdateActivity($activity_id, $currentDate, $logged_userid, $ipAddress);
+    }
+
+    /**
+     * @param $logged_userid
+     * @param $ipAddress
+     *
+     * @return string|null
+     */
+    private function getActivityId($logged_userid, $ipAddress)
+    {
+        if (isset($logged_userid)) {
+            $sql = 'SELECT `id` FROM `^as_online_users` WHERE `user_id` = $';
+            $params = [$logged_userid];
         } else {
-            qa_db_query_sub('INSERT INTO `^as_online_users` (`user_id`, `ip`, `last_activity`) VALUES ($, UNHEX($), $)', $logged_userid, $ipAddress, date('Y-m-d H:i:s'));
+            $sql = 'SELECT `id` FROM `^as_online_users` WHERE `ip` = UNHEX($)';
+            $params = [$ipAddress];
         }
+
+        $activity_id = qa_db_read_one_value(qa_db_query_sub_params($sql, $params), true);
+
+        return $activity_id;
+    }
+
+    /**
+     * @param $activity_id
+     * @param $currentDate
+     * @param $logged_userid
+     * @param $ipAddress
+     */
+    private function insertOrUpdateActivity($activity_id, $currentDate, $logged_userid, $ipAddress)
+    {
+        if (isset($activity_id)) {
+            $sql = 'UPDATE `^as_online_users` SET `last_activity` = $ WHERE `id` = #';
+            $params = [$currentDate, $activity_id];
+        } else {
+            $sql = 'INSERT INTO `^as_online_users` (`user_id`, `ip`, `last_activity`) VALUES ($, UNHEX($), $)';
+            $params = [$logged_userid, $ipAddress, $currentDate];
+        }
+
+        qa_db_query_sub_params($sql, $params);
     }
 
     function output_widget($region, $place, $themeobject, $template, $request, $qa_content)
